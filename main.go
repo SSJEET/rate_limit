@@ -5,7 +5,6 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"sync"
 	"time"
 )
 
@@ -14,16 +13,11 @@ type Limit struct {
 	start time.Time
 }
 
-var (
-	users = map[string]*Limit{}
-	mu    sync.Mutex
-)
+var users = map[string]*Limit{}
 
 func rateLimit(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ip, _, _ := net.SplitHostPort(r.RemoteAddr)
-
-		mu.Lock()
 
 		u := users[ip]
 		if u == nil || time.Since(u.start) >= time.Minute {
@@ -32,11 +26,8 @@ func rateLimit(next http.Handler) http.Handler {
 		}
 
 		u.count++
-		tooMany := u.count > 5
 
-		mu.Unlock()
-
-		if tooMany {
+		if u.count > 5 {
 			http.Error(w, "Too Many Requests", http.StatusTooManyRequests)
 			return
 		}
