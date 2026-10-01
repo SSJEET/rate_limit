@@ -37,9 +37,7 @@ func rateLimit(next http.Handler) http.Handler {
 }
 
 func main() {
-	http.Handle("/", rateLimit(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Hello!")
-	})))
+	http.Handle("/", rateLimit(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {fmt.Fprintln(w, "successfully login!!!")})))
 
 	log.Println("Server running on :8080")
 	http.ListenAndServe(":8080", nil)
