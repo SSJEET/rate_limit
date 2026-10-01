@@ -28,7 +28,7 @@ func rateLimit(next http.Handler) http.Handler {
 		u.count++
 
 		if u.count > 5 {
-			http.Error(w, "Too many requests!!!", http.StatusTooManyRequests)
+			http.Error(w, "Login failed!!!", http.StatusTooManyRequests)
 			return
 		}
 
