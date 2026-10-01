@@ -28,7 +28,7 @@ func rateLimit(next http.Handler) http.Handler {
 		u.count++
 
 		if u.count > 5 {
-			http.Error(w, "Login failed!!!", http.StatusTooManyRequests)
+			http.Error(w, "Too many requests!!!", http.StatusTooManyRequests)
 			return
 		}
 
@@ -36,8 +36,12 @@ func rateLimit(next http.Handler) http.Handler {
 	})
 }
 
+func logg(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Successfully login!!!")
+}
+
 func main() {
-	http.Handle("/", rateLimit(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {fmt.Fprintln(w, "Successfully login!!!")})))
+	http.Handle("/", rateLimit(http.HandlerFunc(logg)))
 
 	log.Println("Server running on :8080")
 	http.ListenAndServe(":8080", nil)
